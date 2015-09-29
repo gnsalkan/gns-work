@@ -6,8 +6,8 @@ Deneme bir ki
 
 
 ```r
-x <- 1:100
-plot(x, col="red")
+x <- rnorm(100)
+plot(x, col="green")
 ```
 
 ![](ggg_files/figure-html/unnamed-chunk-1-1.png) 
