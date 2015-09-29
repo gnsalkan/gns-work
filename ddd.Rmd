@@ -1,0 +1,16 @@
+---
+title: "ddd"
+author: "Gunes Alkan"
+date: "September 29, 2015"
+output: html_document
+fig_caption: yes
+---
+
+
+
+```{r, echo=FALSE,fig.width=4, fig.cap='Hello world!'}
+x <- rnorm(100)
+plot(x)
+```
+
+
