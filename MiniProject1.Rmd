@@ -1,0 +1,190 @@
+---
+title: "Mini Project 1"
+author: "Gunes Alkan"
+date: "September 28, 2015"
+output: html_document
+---
+
+This is an R Markdown document for Explanatory Data Analysis (EDA) for data for New York Times in May 2012. 
+
+```{r, echo=FALSE}
+# setting working directory
+setwd ("E:/")
+# loading necessary packages
+library(survival)
+library(doBy)
+library(ggplot2)
+library(plyr)
+#Entering the whole data:
+fileLocation <- "http://stat.columbia.edu/~rachel/datasets/nyt1.csv"
+fileLocation2 <- "http://stat.columbia.edu/~rachel/datasets/nyt2.csv"
+fileLocation3 <- "http://stat.columbia.edu/~rachel/datasets/nyt3.csv"
+fileLocation4 <- "http://stat.columbia.edu/~rachel/datasets/nyt4.csv"
+fileLocation5 <- "http://stat.columbia.edu/~rachel/datasets/nyt5.csv"
+fileLocation6 <- "http://stat.columbia.edu/~rachel/datasets/nyt6.csv"
+fileLocation7 <- "http://stat.columbia.edu/~rachel/datasets/nyt7.csv"
+fileLocation8 <- "http://stat.columbia.edu/~rachel/datasets/nyt8.csv"
+fileLocation9 <- "http://stat.columbia.edu/~rachel/datasets/nyt9.csv"
+fileLocation10 <- "http://stat.columbia.edu/~rachel/datasets/nyt10.csv"
+fileLocation11 <- "http://stat.columbia.edu/~rachel/datasets/nyt11.csv"
+fileLocation12 <- "http://stat.columbia.edu/~rachel/datasets/nyt12.csv"
+fileLocation13 <- "http://stat.columbia.edu/~rachel/datasets/nyt13.csv"
+fileLocation14 <- "http://stat.columbia.edu/~rachel/datasets/nyt14.csv"
+fileLocation15 <- "http://stat.columbia.edu/~rachel/datasets/nyt15.csv"
+fileLocation16 <- "http://stat.columbia.edu/~rachel/datasets/nyt16.csv"
+fileLocation17 <- "http://stat.columbia.edu/~rachel/datasets/nyt17.csv"
+fileLocation18 <- "http://stat.columbia.edu/~rachel/datasets/nyt18.csv"
+fileLocation19 <- "http://stat.columbia.edu/~rachel/datasets/nyt19.csv"
+fileLocation20 <- "http://stat.columbia.edu/~rachel/datasets/nyt20.csv"
+fileLocation21 <- "http://stat.columbia.edu/~rachel/datasets/nyt21.csv"
+fileLocation22 <- "http://stat.columbia.edu/~rachel/datasets/nyt22.csv"
+fileLocation23 <- "http://stat.columbia.edu/~rachel/datasets/nyt23.csv"
+fileLocation24 <- "http://stat.columbia.edu/~rachel/datasets/nyt24.csv"
+fileLocation25 <- "http://stat.columbia.edu/~rachel/datasets/nyt25.csv"
+fileLocation26 <- "http://stat.columbia.edu/~rachel/datasets/nyt26.csv"
+fileLocation27 <- "http://stat.columbia.edu/~rachel/datasets/nyt27.csv"
+fileLocation28 <- "http://stat.columbia.edu/~rachel/datasets/nyt28.csv"
+fileLocation29 <- "http://stat.columbia.edu/~rachel/datasets/nyt29.csv"
+fileLocation30 <- "http://stat.columbia.edu/~rachel/datasets/nyt30.csv"
+fileLocation31 <- "http://stat.columbia.edu/~rachel/datasets/nyt31.csv"
+# assigning the data names, and reading in urls
+data1 <- read.csv(url(fileLocation))
+data2 <- read.csv(url(fileLocation2))
+data3 <- read.csv(url(fileLocation3))
+data4 <- read.csv(url(fileLocation4))
+data5 <- read.csv(url(fileLocation5))
+data6 <- read.csv(url(fileLocation6))
+data7 <- read.csv(url(fileLocation7))
+data8 <- read.csv(url(fileLocation8))
+data9 <- read.csv(url(fileLocation9))
+data10 <- read.csv(url(fileLocation10))
+data11 <- read.csv(url(fileLocation11))
+data12 <- read.csv(url(fileLocation12))
+data13 <- read.csv(url(fileLocation13))
+data14 <- read.csv(url(fileLocation14))
+data15 <- read.csv(url(fileLocation15))
+data16 <- read.csv(url(fileLocation16))
+data17 <- read.csv(url(fileLocation17))
+data18 <- read.csv(url(fileLocation18))
+data19 <- read.csv(url(fileLocation19))
+data20 <- read.csv(url(fileLocation20))
+data21 <- read.csv(url(fileLocation21))
+data22 <- read.csv(url(fileLocation22))
+data23 <- read.csv(url(fileLocation23))
+data24 <- read.csv(url(fileLocation24))
+data25 <- read.csv(url(fileLocation25))
+data26 <- read.csv(url(fileLocation26))
+data27 <- read.csv(url(fileLocation27))
+data28 <- read.csv(url(fileLocation28))
+data29 <- read.csv(url(fileLocation29))
+data30 <- read.csv(url(fileLocation30))
+data31 <- read.csv(url(fileLocation31))
+#creating a Day column for each day
+data1$Day <- 1
+data2$Day <- 2
+data3$Day <- 3
+data4$Day <- 4
+data5$Day <- 5
+data6$Day <- 6
+data7$Day <- 7
+data8$Day <- 8
+data9$Day <- 9
+data10$Day <- 10
+data11$Day <- 11
+data12$Day <- 12
+data13$Day <- 13
+data14$Day <- 14
+data15$Day <- 15
+data16$Day <- 16
+data17$Day <- 17
+data18$Day <- 18
+data19$Day <- 19
+data20$Day <- 20
+data21$Day <- 21
+data22$Day <- 22
+data23$Day <- 23
+data24$Day <- 24
+data25$Day <- 25
+data26$Day <- 26
+data27$Day <- 27
+data28$Day <- 28
+data29$Day <- 29
+data30$Day <- 30
+data31$Day <- 31
+#combining all data into a single data frame
+dataMay <-rbind(data1, data2, data3, data4, data5, data6, data7, data8, data9, data10,data11,data12,data13, data14, data15, data16, data17, data18, data19, data20, data21, data22, data23, data24, data25, data26,data27,data28,data29,data30,data31)
+#checking features of dataMay
+str(dataMay)
+dim(dataMay)
+#create CTR column
+dataMay1 <- subset(dataMay, Impressions>0)
+dataMay1$CTR <- dataMay1$Clicks/dataMay1$Impressions
+
+#creating age groups
+dataMay1$Agegr <- cut(dataMay1$Age, c(-Inf,18,24,34,44,54,64,Inf))
+levels(dataMay1$Agegr) <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
+head(dataMay1)
+####################################
+#let's examine one random day first
+####################################
+#####   choose a day   #####
+dg <- subset(dataMay1, Day==12)
+#plot impressions
+ggplot(dg, aes(x=Impressions, col=Agegr)) + geom_density()
+#plot CTR
+p <- ggplot(dg, aes(x=CTR, col=Agegr)) + geom_density()
+#get closer in the CTR graph
+p + ylim(0,5)
+p + ylim(0,1)
+# age gr vs impressions bar chart
+ggplot(dg, aes(x=Agegr,y=Impressions, fill=Agegr))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# age gr vs CTR bar chart
+ggplot(dg, aes(x=Agegr,y=CTR, fill=Agegr))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# Gender vs CTR bar chart
+ggplot(dg, aes(x=Gender,y=CTR))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# .	Here, it is seen that for that particular day (day 12), the number of CTR is higher for female users than men.
+
+# now let's look at the CTR. To analyze / visualize CTR 
+# let's compare CTR mean across age groups and gender
+CTRm <- ddply(dg, "Agegr", summarise, CTRmean=mean(CTR)) 
+CTRm 
+CTRm2 <- ddply(dg, "Gender", summarise, CTRmean=mean(CTR)) 
+CTRm2 
+# now let's compare mean of CTRs across age groups
+ggplot(dg, aes(x=CTR)) + geom_histogram(binwidth=.5, colour="pink", fill="white")+ facet_grid(Agegr ~ .) + geom_vline(data=CTRm, aes(xintercept=CTRmean), linetype="dashed", size=1, colour="red")
+##The means for the '65+' and '<18' are visibly higher than the other groups. We can see this better if we just graph the CTR means by age group
+#let's confirm that with bar plot
+ggplot( data= CTRm, aes(x=Agegr, y=CTRmean, fill=Agegr)) + geom_bar(stat="identity")
+# Here, the mean CTR levels are compared across age groups, and clearly the youngest and the oldest age groups have obvious higher means than others. (Again, for that particular day.).That is a bar chart showing the same information. 
+
+#let's also look at Gender variable
+ggplot( data= CTRm2, aes(x=Gender, y=CTRmean, fill=Gender)) + geom_bar(stat="identity")
+# create data frames including variables I want to examine for total and mean
+DataM <- aggregate(cbind(CTR, Impressions, Gender) ~  Day+Agegr, dataMay1, mean)
+DataT <- aggregate(cbind(Clicks, Impressions) ~ Day+Agegr, dataMay1, sum)
+###################################
+##############   PLOTS   #############
+###################################
+# for total
+ggplot(data=DataT, aes(x=Day, y=Clicks, group=Agegr, colour=Agegr))+geom_line()+geom_point() + labs(x="Days of May 2012", y="Clicks", title= "Number of Clicks across the Month")
+###with a reg line fitted
+###ggplot(data=DataT, aes(x=Day, y=Clicks, group=Agegr,colour=Agegr))+geom_line()+geom_point()+geom_smooth(method="lm") ###
+#barplot
+ggplot(DataT, aes(x=Day,y=Clicks, fill=Day))+geom_bar(stat="identity")+guides(fill=FALSE)+ labs(x="Days of May 2012", y="Clicks", title= "Number of Clicks across the Month")
+# for mean
+ggplot(data=DataM, aes(x=Day, y=Impressions, group=Agegr,colour=Agegr))+geom_line()+geom_point()+labs(x="Days of May 2012", y="Impressions", title= "Number of Impressions across the Month")
+ggplot(data=DataM, aes(x=Day, y=CTR, group=Agegr, colour=Agegr))+geom_line()+geom_point()+labs(x="Days of May 2012", y="Click-through-Rate", title= "Mean of Click-through-Rate across the Month")
+
+#Day 1: May 1, 2012 is Tuesday. Here, looking at total clicks in that month, we see and obvious cyclic behavior in the data with peaks at sixth days which is Sunday. And click behavior of the users actually gets heavier towards the end of the month (last two weeks - Sunday). Also, looking at mean click- through-rate for different age groups, we see quite a wondering behavior, and users whose age is greater than 65, and less than 18 (this groups includes those whose age is not known) have a higher rate, and it is followed by CTR of 55-64 age group. Lastly, looking at the graph plotted for Impressions across days, it is showed that number of impressions is random for each day of the month and for each user.
+
+######################################
+##    saving dataMay1 in a file     ############
+## save(dataMay1, file="E:/dataMay1.Rda") ##
+######################################
+
+
+
+```
+
+
+
