@@ -1,0 +1,68 @@
+---
+title: "denememp"
+author: "Gunes Alkan"
+date: "September 28, 2015"
+output: html_document
+---
+
+
+```{r, echo=FALSE}
+# loading necessary packages
+library(survival)
+library(doBy)
+library(ggplot2)
+library(plyr)
+#read in the data
+k <- read.csv("E:/dataofmay.csv")
+####################################
+#let's examine one random day first
+####################################
+#####   choose a day   #####
+dg <- subset(k, Day==12)
+#plot impressions
+ggplot(dg, aes(x=Impressions, col=Agegr)) + geom_density()
+#plot CTR
+p <- ggplot(dg, aes(x=CTR, col=Agegr)) + geom_density()
+#get closer in the CTR graph
+p + ylim(0,5)
+p + ylim(0,1)
+# age gr vs impressions bar chart
+ggplot(dg, aes(x=Agegr,y=Impressions, fill=Agegr))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# age gr vs CTR bar chart
+ggplot(dg, aes(x=Agegr,y=CTR, fill=Agegr))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# Gender vs CTR bar chart
+ggplot(dg, aes(x=Gender,y=CTR))+geom_bar(stat="identity") + scale_fill_brewer(palette="Spectral")
+# now let's look at the CTR. To analyze / visualize CTR 
+# let's compare CTR mean across age groups and gender
+CTRm <- ddply(dg, "Agegr", summarise, CTRmean=mean(CTR)) 
+CTRm 
+CTRm2 <- ddply(dg, "Gender", summarise, CTRmean=mean(CTR)) 
+CTRm2 
+# now let's compare mean of CTRs across age groups
+ggplot(dg, aes(x=CTR)) + geom_histogram(binwidth=.5, colour="pink", fill="white")+ facet_grid(Agegr ~ .) + geom_vline(data=CTRm, aes(xintercept=CTRmean), linetype="dashed", size=1, colour="red")
+##The means for the '65+' and '<18' are visibly higher than the other groups. We can see this better if we just graph the CTR means by age group
+#let's confirm that with bar plot
+ggplot( data= CTRm, aes(x=Agegr, y=CTRmean, fill=Agegr)) + geom_bar(stat="identity")
+#let's also look for Gender
+ggplot( data= CTRm2, aes(x=Gender, y=CTRmean, fill=Gender)) + geom_bar(stat="identity")
+# create data frames including variables I want to examine for total and mean
+DataM <- aggregate(cbind(CTR, Impressions, Gender) ~  Day+Agegr, k, mean)
+DataT <- aggregate(cbind(Clicks, Impressions) ~ Day+Agegr, k, sum)
+###################################
+##############   PLOTS   #############
+###################################
+# for total
+ggplot(data=DataT, aes(x=Day, y=Clicks, group=Agegr, colour=Agegr))+geom_line()+geom_point() + labs(x="Days of May 2012", y="Clicks", title= "Number of Clicks across the Month")
+###with a reg line fitted
+###ggplot(data=DataT, aes(x=Day, y=Clicks, group=Agegr,colour=Agegr))+geom_line()+geom_point()+geom_smooth(method="lm") ###
+#barplot
+ggplot(DataT, aes(x=Day,y=Clicks, fill=Day))+geom_bar(stat="identity")+guides(fill=FALSE)+ labs(x="Days of May 2012", y="Clicks", title= "Number of Clicks across the Month")
+# for mean
+ggplot(data=DataM, aes(x=Day, y=Impressions, group=Agegr,colour=Agegr))+geom_line()+geom_point()+labs(x="Days of May 2012", y="Impressions", title= "Number of Impressions across the Month")
+ggplot(data=DataM, aes(x=Day, y=CTR, group=Agegr, colour=Agegr))+geom_line()+geom_point()+labs(x="Days of May 2012", y="Click-through-Rate", title= "Mean of Click-through-Rate across the Month")
+
+
+```
+
+
+
